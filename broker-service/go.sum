@@ -1,3 +1,5 @@
+github.com/deepMOORE/tools v0.0.0-20240220150050-79230138a794 h1:JKJLeALAmjUuJPFbEf5E5bWwRbJK9ZgQimoGqRTliBA=
+github.com/deepMOORE/tools v0.0.0-20240220150050-79230138a794/go.mod h1:Ug+rEX2oFtaNFv4kBHGSdofVZcj0rYQlUy0EtpuHXJ4=
 github.com/go-chi/chi/v5 v5.0.11 h1:BnpYbFZ3T3S1WMpD79r7R5ThWX40TaFB7L31Y8xqSwA=
 github.com/go-chi/chi/v5 v5.0.11/go.mod h1:DslCQbL2OYiznFReuXYUmQ2hGd1aDpCnlMNITLSKoi8=
 github.com/go-chi/chi/v5 v5.0.12 h1:9euLV5sTrTNTRUU9POmDUvfxyj6LAABLUcEWO+JJb4s=

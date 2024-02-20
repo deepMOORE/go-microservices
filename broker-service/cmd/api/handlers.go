@@ -6,6 +6,8 @@ import (
 	"errors"
 	"log"
 	"net/http"
+
+	"github.com/deepMOORE/tools"
 )
 
 type RequestPayload struct {
@@ -19,21 +21,21 @@ type AuthPayload struct {
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
-	payload := jsonResponse{
+	payload := tools.JsonResponse{
 		Error:   false,
 		Message: "Hit the broker",
 	}
 
-	_ = app.writeJSON(w, http.StatusOK, payload)
+	_ = tools.WriteJSON(w, http.StatusOK, payload)
 }
 
 func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	var requestPayload RequestPayload
 
-	err := app.readJSON(w, r, &requestPayload)
+	err := tools.ReadJSON(w, r, &requestPayload)
 
 	if err != nil {
-		app.errorJSON(w, err)
+		tools.ErrorJSON(w, err)
 		return
 	}
 
@@ -42,7 +44,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		log.Println("Auth Detected " + requestPayload.Auth.Email)
 		app.authenticate(w, requestPayload.Auth)
 	default:
-		app.errorJSON(w, errors.New("unknown action"))
+		tools.ErrorJSON(w, errors.New("unknown action"))
 	}
 }
 
@@ -53,7 +55,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	if err != nil {
 		log.Println("Auth action: Unable to create request with " + err.Error())
-		app.errorJSON(w, err)
+		tools.ErrorJSON(w, err)
 		return
 	}
 
@@ -62,35 +64,35 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 
 	if err != nil {
 		log.Println("Auth action: Error response" + err.Error())
-		app.errorJSON(w, err)
+		tools.ErrorJSON(w, err)
 		return
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode == http.StatusUnauthorized {
-		app.errorJSON(w, errors.New("invalid credentials"))
+		tools.ErrorJSON(w, errors.New("invalid credentials"))
 	} else if response.StatusCode != http.StatusAccepted {
-		app.errorJSON(w, errors.New("error calling auth service"))
+		tools.ErrorJSON(w, errors.New("error calling auth service"))
 		return
 	}
 
-	var jsonFromService jsonResponse
+	var jsonFromService tools.JsonResponse
 
 	err = json.NewDecoder(response.Body).Decode(&jsonFromService)
 	if err != nil {
-		app.errorJSON(w, err)
+		tools.ErrorJSON(w, err)
 		return
 	}
 
 	if jsonFromService.Error {
-		app.errorJSON(w, err, http.StatusUnauthorized)
+		tools.ErrorJSON(w, err, http.StatusUnauthorized)
 		return
 	}
 
-	var payload jsonResponse
+	var payload tools.JsonResponse
 	payload.Error = false
 	payload.Message = "Authenticated"
 	payload.Data = jsonFromService.Data
 
-	app.writeJSON(w, http.StatusAccepted, payload)
+	tools.WriteJSON(w, http.StatusAccepted, payload)
 }
