@@ -26,11 +26,13 @@ type Config struct {
 }
 
 func main() {
+	log.Printf("Starting logger...")
 	mongoclient, err := connectToMongo()
 
 	if err != nil {
 		log.Panic(err)
 	}
+	log.Printf("Connected to mongo...")
 	client = mongoclient
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)

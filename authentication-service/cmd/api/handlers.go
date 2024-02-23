@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -36,6 +38,8 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 		tools.ErrorJSON(w, errors.New("invalid crenedtials"), http.StatusBadRequest)
 	}
 
+	_ = app.logRequest("authenticate", fmt.Sprintf("%s logged in", user.Email))
+
 	payload := tools.JsonResponse{
 		Error:   false,
 		Message: fmt.Sprintf("Logged in user %s", user.Email),
@@ -43,4 +47,32 @@ func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tools.WriteJSON(w, http.StatusAccepted, payload)
+}
+
+func (app *Config) logRequest(name string, data string) error {
+	var entity struct {
+		Name string `json:"name"`
+		Data string `json:"data"`
+	}
+
+	entity.Name = name
+	entity.Data = data
+
+	jsonData, _ := json.MarshalIndent(entity, "", "\t")
+	logServiceUrl := "http://logger-service/log"
+
+	reqeust, err := http.NewRequest("POST", logServiceUrl, bytes.NewBuffer(jsonData))
+
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	_, err = client.Do(reqeust)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
