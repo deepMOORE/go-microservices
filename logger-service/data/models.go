@@ -42,9 +42,8 @@ func (l *LogEntry) Insert(entry LogEntry) error {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
-
 	if err != nil {
-		log.Println("Error inseting into logs: ", err)
+		log.Println("Error inserting into logs:", err)
 		return err
 	}
 
@@ -56,13 +55,13 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	defer cancel()
 
 	collection := client.Database("logs").Collection("logs")
+
 	opts := options.Find()
 	opts.SetSort(bson.D{{"created_at", -1}})
 
 	cursor, err := collection.Find(context.TODO(), bson.D{}, opts)
-
 	if err != nil {
-		log.Println("Findong all docs error: ", err)
+		log.Println("Finding all docs error:", err)
 		return nil, err
 	}
 	defer cursor.Close(ctx)
@@ -144,5 +143,5 @@ func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
 		return nil, err
 	}
 
-	return result, err
+	return result, nil
 }
