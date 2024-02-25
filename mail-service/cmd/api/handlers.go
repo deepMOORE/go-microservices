@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/deepMOORE/tools"
@@ -18,6 +19,7 @@ func (app *Config) SendMail(w http.ResponseWriter, r *http.Request) {
 
 	err := tools.ReadJSON(w, r, &requestPayload)
 	if err != nil {
+		log.Println(err)
 		tools.ErrorJSON(w, err)
 		return
 	}
@@ -31,6 +33,7 @@ func (app *Config) SendMail(w http.ResponseWriter, r *http.Request) {
 
 	err = app.Mailer.SendSmtpMessage(msg)
 	if err != nil {
+		log.Println(err)
 		tools.ErrorJSON(w, err)
 		return
 	}

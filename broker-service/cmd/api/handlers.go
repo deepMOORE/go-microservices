@@ -62,13 +62,13 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		app.logItem(w, requestPayload.Log)
 	case "mail":
 		log.Println("Mail Detected " + requestPayload.Mail.From)
-		app.SendMail(w, requestPayload.Mail)
+		app.sendMail(w, requestPayload.Mail)
 	default:
 		tools.ErrorJSON(w, errors.New("unknown action"))
 	}
 }
 
-func (app *Config) SendMail(w http.ResponseWriter, msg MailPayload) {
+func (app *Config) sendMail(w http.ResponseWriter, msg MailPayload) {
 	jsonData, _ := json.MarshalIndent(msg, "", "\t")
 
 	mailServiceUrl := "http://mail-service/send"
