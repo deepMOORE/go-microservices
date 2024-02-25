@@ -2,6 +2,6 @@ FROM alpine:latest
 
 RUN mkdir /app
 
-COPY mailServiceApp /app
+COPY mailerApp /app
 
-CMD [ "/app/mailServiceApp" ]
+CMD [ "/app/mailerApp" ]
