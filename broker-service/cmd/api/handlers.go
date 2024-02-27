@@ -7,6 +7,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"net/rpc"
 
 	"github.com/deepMOORE/tools"
 )
@@ -60,7 +61,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
 		log.Println("Log Detected " + requestPayload.Log.Name)
-		app.logEventViaRabbit(w, requestPayload.Log)
+		app.logItemViaRPC(w, requestPayload.Log)
 	case "mail":
 		log.Println("Mail Detected " + requestPayload.Mail.From)
 		app.sendMail(w, requestPayload.Mail)
@@ -202,6 +203,38 @@ func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
 	var payload tools.JsonResponse
 	payload.Error = false
 	payload.Message = "Logged via RabbitMQ"
+
+	tools.WriteJSON(w, http.StatusAccepted, payload)
+}
+
+type RpcPayload struct {
+	Name string
+	Data string
+}
+
+func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
+	client, err := rpc.Dial("tcp", "logger-service:5001")
+	if err != nil {
+		tools.ErrorJSON(w, err)
+		return
+	}
+
+	rpcPayload := RpcPayload{
+		Name: l.Name,
+		Data: l.Data,
+	}
+
+	var result string
+	err = client.Call("RpcServer.LogInfo", rpcPayload, &result)
+	if err != nil {
+		tools.ErrorJSON(w, err)
+		return
+	}
+
+	payload := tools.JsonResponse{
+		Error:   false,
+		Message: result,
+	}
 
 	tools.WriteJSON(w, http.StatusAccepted, payload)
 }
