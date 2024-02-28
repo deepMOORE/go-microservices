@@ -13,7 +13,7 @@ up:
 	@echo Docker images started!
 
 ## up_build: stops docker-compose (if running), builds all projects and starts docker compose
-up_build: build_broker build_auth build_logger build_mail build_listener
+up_build: generate_protobuf build_broker build_auth build_logger build_mail build_listener
 	@echo Stopping docker images (if running...)
 	docker-compose down
 	@echo Building (when required) and starting docker images...
@@ -72,3 +72,11 @@ stop:
 	@echo Stopping front end...
 	@taskkill /IM "${FRONT_END_BINARY}" /F
 	@echo "Stopped front end!"
+
+## stop: generate protobuf files
+generate_protobuf:
+	@echo Generating logger-service protobuf files
+	chdir ..\logger-service\logs && protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative logs.proto
+	@echo Generating broker-service protobuf files
+	chdir ..\broker-service\logs && protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative logs.proto
+	@echo Done!
