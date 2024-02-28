@@ -49,7 +49,7 @@ services:
     deploy:
       mode: global
 
-   mailhog:
+  mailhog:
     image: 'mailhog/mailhog:latest'
     ports:
       - "8025:8025"
