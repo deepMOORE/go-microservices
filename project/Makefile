@@ -36,7 +36,7 @@ build_broker:
 ## build_front_linux: builds the frontend binary as a linux executable
 build_front_linux:
 	@echo Building front end linux binary...
-	chdir ..\front-end && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${FRONT_BINARY} ./cmd/api
+	chdir ..\front-end && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${FRONT_BINARY} ./cmd/web
 	@echo Done!
 
 ## build_mail: builds the mailer binary as a linux executable
