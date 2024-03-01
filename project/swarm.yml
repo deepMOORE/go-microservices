@@ -2,9 +2,7 @@ version: '3'
 
 services:
   broker-service:
-    image: deepmoore/broker-service:1.0.0
-    ports:
-      - "8080:80"
+    image: deepmoore/broker-service:1.0.1
     deploy:
       mode: replicated
       replicas: 1
@@ -24,7 +22,7 @@ services:
       DSN: "host=postgres port=5432 user=postgres dbname=users password=password sslmode=disable timezone=UTC connect_timeout=5"
 
   logger-service:
-    image: deepmoore/logger-service:1.0.0
+    image: deepmoore/logger-service:1.0.1
     deploy:
       mode: replicated
       replicas: 1
